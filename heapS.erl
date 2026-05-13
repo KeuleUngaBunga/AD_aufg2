@@ -9,9 +9,9 @@
 
 
 heapS(List) ->
-	Heap = create(),
+	Heap = create(),%Phase 1
 	Built_heap = build_heap(List, Heap),
-	get_sorted_list(Built_heap).
+	get_sorted_list(Built_heap). %Phase 2
 
 %heap aufbauen
 build_heap([H|T], Heap) ->
@@ -19,7 +19,8 @@ build_heap([H|T], Heap) ->
 	build_heap(T, NewHeap);
 build_heap([], Heap) -> Heap.
 
-get_sorted_list(Heap) ->% nochmal anschauen
+%heap sortieren und in neuer Liste ausgeben
+get_sorted_list(Heap) ->
 	case isEmpty(Heap) of %case, da imported func illegal in guard
 		true -> [];
 		false ->
