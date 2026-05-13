@@ -7,7 +7,7 @@
 
 %cd("C:/Users/pfeif/Documents/HAW/S3/AD 3/AD_Aufg2").
 
-
+heapS([])-> [];
 heapS(List) ->
 	Heap = create(),%Phase 1
 	Built_heap = build_heap(List, Heap),
