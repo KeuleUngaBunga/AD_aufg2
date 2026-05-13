@@ -1,7 +1,6 @@
 %Start for heapS.erl
 -module(heapS).
 -author("Tjark Pfeiffer").
-%-compile(export_all).
 -export([heapS/1]).
 -import(heap, [create/0, isEmpty/1, insert/2, pop/1, top/1]).
 
