@@ -11,7 +11,7 @@
 heapS(List) ->
 	Heap = create(),%Phase 1
 	Built_heap = build_heap(List, Heap),
-	get_sorted_list(Built_heap). %Phase 2
+	get_sorted_list(Built_heap,[]). %Phase 2
 
 %heap aufbauen
 build_heap([H|T], Heap) ->
@@ -20,14 +20,15 @@ build_heap([H|T], Heap) ->
 build_heap([], Heap) -> Heap.
 
 %heap sortieren und in neuer Liste ausgeben
-get_sorted_list(Heap) ->
+get_sorted_list(Heap, Acc) ->
 	case isEmpty(Heap) of %case, da imported func illegal in guard
-		true -> [];
+		true -> Acc;
 		false ->
 			Top = top(Heap),
-			io:format("Top: ~p~n", [Top]),
-			io:format("Heap before pop: ~p~n", [Heap]),
+			%io:format("Top: ~p~n", [Top]),
+			%io:format("Heap before pop: ~p~n", [Heap]),
 			NewHeap = pop(Heap),
-			[Top | get_sorted_list(NewHeap)]
+			get_sorted_list(NewHeap, [Top | Acc])%Top|Acc für aufsteigend sortierte Liste
 	end.
+
 %end for heapS.erl

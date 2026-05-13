@@ -1,0 +1,16 @@
+Heap Sort Zufallszahlen 100 Zahlen Startzeit: 13.05 12:27:15,945|Endezeit: 13.05 12:27:15,946| Diff: 2 ms Sortiert: false
+Heap Sort aufsteigend 100 Zahlen Startzeit: 13.05 12:27:15,947|Endezeit: 13.05 12:27:15,948| Diff: 1 ms Sortiert: false
+Heap Sort absteigend 100 Zahlen Startzeit: 13.05 12:27:15,948|Endezeit: 13.05 12:27:15,950| Diff: 1 ms Sortiert: false
+Heap Sort runSortiert 100 Zahlen Startzeit: 13.05 12:27:15,950|Endezeit: 13.05 12:27:15,959| Diff: 8 ms Sortiert: false
+Heap Sort Zufallszahlen 100 Zahlen Startzeit: 13.05 12:50:47,057|Endezeit: 13.05 12:50:47,059| Diff: 2 ms Sortiert: true
+Heap Sort aufsteigend 100 Zahlen Startzeit: 13.05 12:50:47,059|Endezeit: 13.05 12:50:47,061| Diff: 2 ms Sortiert: true
+Heap Sort absteigend 100 Zahlen Startzeit: 13.05 12:50:47,061|Endezeit: 13.05 12:50:47,062| Diff: 1 ms Sortiert: true
+Heap Sort runSortiert 100 Zahlen Startzeit: 13.05 12:50:47,062|Endezeit: 13.05 12:50:47,064| Diff: 2 ms Sortiert: true
+Heap Sort Zufallszahlen 100 Zahlen Startzeit: 13.05 13:05:42,963|Endezeit: 13.05 13:05:42,965| Diff: 2 ms Sortiert: true
+Heap Sort aufsteigend 100 Zahlen Startzeit: 13.05 13:05:42,965|Endezeit: 13.05 13:05:42,966| Diff: 1 ms Sortiert: true
+Heap Sort absteigend 100 Zahlen Startzeit: 13.05 13:05:42,967|Endezeit: 13.05 13:05:42,968| Diff: 1 ms Sortiert: true
+Heap Sort runSortiert 100 Zahlen Startzeit: 13.05 13:05:42,968|Endezeit: 13.05 13:05:42,973| Diff: 5 ms Sortiert: true
+Heap Sort Zufallszahlen 200 Zahlen Startzeit: 13.05 13:29:30,288|Endezeit: 13.05 13:29:30,298| Diff: 10 ms Sortiert: true
+Heap Sort aufsteigend 200 Zahlen Startzeit: 13.05 13:29:30,298|Endezeit: 13.05 13:29:30,304| Diff: 6 ms Sortiert: true
+Heap Sort absteigend 200 Zahlen Startzeit: 13.05 13:29:30,304|Endezeit: 13.05 13:29:30,308| Diff: 4 ms Sortiert: true
+Heap Sort runSortiert 200 Zahlen Startzeit: 13.05 13:29:30,309|Endezeit: 13.05 13:29:30,322| Diff: 13 ms Sortiert: true
