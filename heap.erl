@@ -11,30 +11,36 @@ isEmpty({_,_}) -> false. %??
 %Baumstruktur wird noch nicht beachtet!!!! (Nur iteratives Vergleichen von Elementen)--------------
 %Knoten i hat Nachfolger 2*i (links) und 2*i+1 (rechts) beachten für iterieren
 
-top([Head|_]) -> Head.%top Element zurückgeben (Heap sollte unverändert in HeapS bestehen bleiben)
+top({[Head|_],_}) -> Head.%top Element zurückgeben (Heap sollte unverändert in HeapS bestehen bleiben)
 
 
 %12.05. --------------------------------pop:!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!nicht finished
 %Es fehlt: ein loop um nach dem Tauschen Ersetzen des ersten Elements noch alle Children zu überprüfen!
-pop({[Head|Tail],Count})->
-    NewHeap = get_Elem([Head|Tail], Count-1),
+pop({Heap,Count})->
+    io:format("Heap: ~p~n", [Heap]),
+    NewHeap = get_Elem(Heap, Count-1),%das zerstört den heap!!!
+    io:format("Heap: ~p~n", [NewHeap]),
     NewHeap = compare_loop_pop(NewHeap, 1, Count-1),%maxHeap wiederherstellen, Idx=1 für beginn bei Wurzel
     {NewHeap, Count-1}.%1. letztes Element an erste Stelle setzen, 2. neues Heap zurückgeben mit Count-1
 
 %12.05. --------------------------------insert sollte fertig sein--------------------------> testen!!
-insert({Heap, Count}, E) -> insert_at_Idx(Heap, Count, E),%1. an letzter Stelle neues Element
-    {compare_loop(Heap, Count),Count+1}.%2. 
+%übergehen von insert_at_Idx für das erste Element
+%insert({_, Count}, E) when Count == 1 -> {[E], 2};%erstes Element wird eingefügt, Count auf 2 setzen für nächsten insert
+insert({Heap, Count}, E) -> NewHeap=insert_at_Idx(Heap, Count, E),%1. an letzter Stelle neues Element
+    {compare_loop(NewHeap, Count),Count+1}.%2. 
 
 %Hilfsfunktionen
 %12.05. Ausgang: wenn Idx = 0 dann bin ich an der richtigen Stelle 
 
 %go to Idx, wenn Idx = 0 dann an freier Stelle E einfügen
-insert_at_Idx([H|Tail], 0, E) -> [E|Tail];%klammern Richtig?????????????????????????
+insert_at_Idx([], _, E) -> [E];%leere Liste, erstes Element wird eingefügt
+insert_at_Idx([_|Tail], 1, E) -> [E|Tail];%H wird ersetzt, Logik an anderer Stelle/ 1 oder 0? 
 insert_at_Idx([H|Tail], Idx, E) -> [H|insert_at_Idx(Tail, Idx-1, E)].
 
 %get element at Idx of heap for insert for pop
-get_Elem([H|Tail], 0) -> H;
-get_Elem([H|Tail], Idx) -> get_Elem(Tail, Idx-1).
+%get_Elem([],1)-> 
+get_Elem([H|_], 1) -> H;% 1 oder 0?
+get_Elem([_|Tail], Idx) -> get_Elem(Tail, Idx-1).
 
 %swap elements E1 and E2 at Idx1 and Idx2
 swap(Heap, E1, E2, Idx1, Idx2) ->
@@ -47,19 +53,21 @@ compare_loop(Heap, Idx) when Idx > 1 ->
     {NewHeap, NewIdx} = compare_with_parent(Heap, Idx),
     if NewIdx >= 0 -> compare_loop(NewHeap, NewIdx);%Vergleicht immer weiter bis -1 als Abbruchkriteium
        true -> NewHeap
-    end.
+    end;
 compare_loop(Heap, _) -> Heap. %Abbruchbedingung, wenn Idx <= 1 (Wurzel erreicht)
 
 %compare child with parent 
-compare_with_parent(Heap, Idx) when Idx mod 2 == 0 -> 
+compare_with_parent(Heap, Idx) when Idx rem 2 == 0 -> 
     ParentIdx = Idx div 2,
-    E1 = get_Elem(Heap, Idx),
-    E2 = get_Elem(Heap, ParentIdx),
+    io:format("compare_with_parent: Idx=~p, ParentIdx=~p~n", [Idx, ParentIdx]),
+    E1 = get_Elem(Heap, Idx),%wird heap hier verändert?
+    E2 = get_Elem(Heap, ParentIdx),%wieso ist heap leer?
     if E1 > E2 -> {swap(Heap, E1, E2, Idx, ParentIdx), ParentIdx};%gibt Idx für weitere Vergleiche zurück
        true -> {Heap, -1}%-1 als Abbruchbedingung für weitere Vergleiche
     end;
-compare_with_parent(Heap, Idx) when Idx mod 2 == 1 ->
+compare_with_parent(Heap, Idx) when Idx rem 2 == 1 ->
     ParentIdx = (Idx - 1) div 2,
+    io:format("compare_with_parent: Idx=~p, ParentIdx=~p~n", [Idx, ParentIdx]),
     E1 = get_Elem(Heap, Idx),
     E2 = get_Elem(Heap, ParentIdx),
     if E1 > E2 -> {swap(Heap, E1, E2, Idx, ParentIdx), ParentIdx};
@@ -69,6 +77,7 @@ compare_with_parent(Heap, Idx) when Idx mod 2 == 1 ->
 %--------------------------------Hilfe für pop---------------------------------
 %erst alle immer die linken Kinder vergleichen, dann die rechten, Hauptsache oben ist der größte Wert
 compare_loop_pop(Heap, Idx, Count) when Idx < Count ->
+    io:format("Heap: ~p~n", [Heap]),
     {NewHeap, NewIdx} = compare_with_left_child(Heap, Idx, Count),
     if NewIdx >= 0 -> NewHeap = compare_loop_pop(NewHeap, NewIdx, Count);%Vergleicht immer weiter bis -1 als Abbruchkriteium
        true -> NewHeap
@@ -81,6 +90,8 @@ compare_loop_pop(Heap, Idx, Count) when Idx < Count ->
 compare_with_left_child(Heap, Idx, Count) ->
     LeftChildIdx = 2 * Idx,%LeftChildIdx darf nicht größer als Count sein
     if LeftChildIdx < Count ->%Abbruch (kein Child vorhanden)
+        io:format("compare_with_left_child: Idx=~p, LeftChildIdx=~p~n", [Idx, LeftChildIdx]),
+        io:format("Heap: ~p~n", [Heap]),
         E1 = get_Elem(Heap, Idx),
         E2 = get_Elem(Heap, LeftChildIdx),
         if E1 < E2 -> {swap(Heap, E1, E2, Idx, LeftChildIdx), LeftChildIdx};% wenn kind größer, dann swap
@@ -92,6 +103,8 @@ compare_with_left_child(Heap, Idx, Count) ->
 compare_with_right_child(Heap, Idx, Count) ->
     RightChildIdx = 2 * Idx + 1,
     if RightChildIdx < Count ->%Abbruch
+        io:format("compare_with_right_child: Idx=~p, RightChildIdx=~p~n", [Idx, RightChildIdx]),
+        io:format("Heap: ~p~n", [Heap]),
         E1 = get_Elem(Heap, Idx),
         E2 = get_Elem(Heap, RightChildIdx),
         if E1 < E2 -> {swap(Heap, E1, E2, Idx, RightChildIdx), RightChildIdx};% wenn kind größer, dann swap
