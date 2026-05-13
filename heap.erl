@@ -16,12 +16,15 @@ top({[Head|_],_}) -> Head.%top Element zurückgeben (Heap sollte unverändert in
 
 %12.05. --------------------------------pop:!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!nicht finished
 %Es fehlt: ein loop um nach dem Tauschen Ersetzen des ersten Elements noch alle Children zu überprüfen!
+pop({_, 2})->{[], 1};%nur ein Element im Heap, nach pop ist er leer
 pop({Heap,Count})->
     io:format("Heap: ~p~n", [Heap]),
-    NewHeap = get_Elem(Heap, Count-1),%das zerstört den heap!!!
-    io:format("Heap: ~p~n", [NewHeap]),
-    NewHeap = compare_loop_pop(NewHeap, 1, Count-1),%maxHeap wiederherstellen, Idx=1 für beginn bei Wurzel
-    {NewHeap, Count-1}.%1. letztes Element an erste Stelle setzen, 2. neues Heap zurückgeben mit Count-1
+    Elem = get_Elem(Heap, Count-1),%das zerstört den heap!!!
+    NewHeap = insert_at_Idx(Heap, 1, Elem),%1. letztes Element an erste Stelle setzen
+    NewHeap2 = remove_last_elem(NewHeap),%2. letztes Element entfernen
+    io:format("Heap: ~p~n", [NewHeap2]),
+    NewHeap3 = compare_loop_pop(NewHeap2, 1, Count-1),%maxHeap wiederherstellen, Idx=1 für beginn bei Wurzel
+    {NewHeap3, Count-1}.%1. letztes Element an erste Stelle setzen, 2. neues Heap zurückgeben mit Count-1
 
 %12.05. --------------------------------insert sollte fertig sein--------------------------> testen!!
 %übergehen von insert_at_Idx für das erste Element
@@ -79,10 +82,10 @@ compare_with_parent(Heap, Idx) when Idx rem 2 == 1 ->
 compare_loop_pop(Heap, Idx, Count) when Idx < Count ->
     io:format("Heap: ~p~n", [Heap]),
     {NewHeap, NewIdx} = compare_with_left_child(Heap, Idx, Count),
-    if NewIdx >= 0 -> NewHeap = compare_loop_pop(NewHeap, NewIdx, Count);%Vergleicht immer weiter bis -1 als Abbruchkriteium
-       true -> NewHeap
+    if NewIdx >= 0 -> NewHeap1 = compare_loop_pop(NewHeap, NewIdx, Count);%Vergleicht immer weiter bis -1 als Abbruchkriteium
+       true -> NewHeap1 = NewHeap%fix um immer den aktuelsten NewHeap für die rchte Seite zu haben
     end,
-    {NewHeap2, NewIdx2} = compare_with_right_child(NewHeap, Idx, Count),
+    {NewHeap2, NewIdx2} = compare_with_right_child(NewHeap1, Idx, Count),
     if NewIdx2 >= 0 -> compare_loop_pop(NewHeap2, NewIdx2, Count);%Vergleicht immer weiter bis -1 als Abbruchkriteium
        true -> NewHeap2
     end.
@@ -112,6 +115,9 @@ compare_with_right_child(Heap, Idx, Count) ->
         end;
     true -> {Heap, -1}
     end.
+
+remove_last_elem([_|[]]) -> [];
+remove_last_elem([H|Tail]) -> [H | remove_last_elem(Tail)].
 %end for heap.erl
 
 
