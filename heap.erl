@@ -12,35 +12,32 @@ isEmpty({_,_}) -> false.
 top({[Head|_],_}) -> Head.%top Element zurückgeben (Heap sollte unverändert in HeapS bestehen bleiben)
 
 
-%13.05. --------------------------------pop fertig ----------------------------------
+%--------------------------------pop----------------------------------
 pop({_, 2})->{[], 1};%nur ein Element im Heap, nach pop ist er leer
 pop({Heap,Count})->
-    Elem = get_Elem(Heap, Count-1),
-    NewHeap = insert_at_Idx(Heap, 1, Elem),%1. letztes Element an erste Stelle setzen
-    NewHeap2 = remove_last_elem(NewHeap),%2. letztes Element entfernen
-    NewHeap3 = compare_loop_pop(NewHeap2, 1, Count-1),%maxHeap wiederherstellen, Idx=1 für beginn bei Wurzel
-    {NewHeap3, Count-1}.%1. letztes Element an erste Stelle setzen, 2. neues Heap zurückgeben mit Count-1
+    {Elem, NewHeap} = remove_last_elem(Heap),%kürzt den heap um 1 und gibt dieses Element zurück
+    NewHeap2 = compare_loop_pop([Elem|NewHeap], 1, Count-1),%maxHeap wiederherstellen, Idx=1 für beginn bei Wurzel
+    {NewHeap2, Count-1}.%1. letztes Element an erste Stelle setzen, 2. neues Heap zurückgeben mit Count-1
 
-%12.05. --------------------------------insert fertig --------------------------
+%--------------------------------insert--------------------------
 insert({Heap, Count}, E) -> NewHeap=insert_at_Idx(Heap, Count, E),%1. an letzter Stelle neues Element
     {compare_loop(NewHeap, Count),Count+1}.%2. 
 
 %Hilfsfunktionen
-%12.05. Ausgang: wenn Idx = 1 dann bin ich an der richtigen Stelle 
 
 %go to Idx, wenn Idx = 0 dann an freier Stelle E einfügen
 insert_at_Idx([], _, E) -> [E];%leere Liste, erstes Element wird eingefügt
 insert_at_Idx([_|Tail], 1, E) -> [E|Tail];%H wird ersetzt, Logik an anderer Stelle
 insert_at_Idx([H|Tail], Idx, E) -> [H|insert_at_Idx(Tail, Idx-1, E)].
 
-%get element at Idx of heap for insert for pop
-get_Elem([H|_], 1) -> H;
-get_Elem([_|Tail], Idx) -> get_Elem(Tail, Idx-1).
+%Element an Idx holen
+%get_Elem([H|_], 1) -> H;
+%get_Elem([_|Tail], Idx) -> get_Elem(Tail, Idx-1).
 
-%swap elements E1 and E2 at Idx1 and Idx2
-swap(Heap, E1, E2, Idx1, Idx2) ->
-    Heap1 = insert_at_Idx(Heap, Idx1, E2),
-    insert_at_Idx(Heap1, Idx2, E1).
+%tausche Parent und Child
+swap([_|Tail], ParentE, ChildE, ParentIdx, ChildIdx) when ParentIdx == 1 -> [ChildE|swap(Tail, ParentE, ChildE, ParentIdx-1, ChildIdx-1)];
+swap([_|Tail], ParentE, ChildE, ParentIdx, ChildIdx) when ChildIdx == 1 -> [ParentE|Tail];
+swap([H|Tail], ParentE, ChildE, ParentIdx, ChildIdx) -> [H|swap(Tail, ParentE, ChildE, ParentIdx-1, ChildIdx-1)].
 
 %--------------------------------Hilfe für insert---------------------------------
 %compare loop bis alle an richtiger Stelle
@@ -55,17 +52,15 @@ compare_loop(Heap, _) -> Heap. %Abbruchbedingung, wenn Idx <= 1 (Wurzel erreicht
 compare_with_parent(Heap, Idx) when Idx rem 2 == 0 -> 
     ParentIdx = Idx div 2,
     %io:format("compare_with_parent: Idx=~p, ParentIdx=~p~n", [Idx, ParentIdx]),
-    E1 = get_Elem(Heap, Idx),
-    E2 = get_Elem(Heap, ParentIdx),
-    if E1 > E2 -> {swap(Heap, E1, E2, Idx, ParentIdx), ParentIdx};%gibt Idx für weitere Vergleiche zurück
+    {ParentE, ChildE} = get_Parent_Child(Heap, ParentIdx, Idx),%get Parent and Child in one function for faster runtime
+    if ChildE > ParentE -> {swap(Heap, ParentE, ChildE, ParentIdx, Idx), ParentIdx};%gibt Idx für weitere Vergleiche zurück
        true -> {Heap, -1}%-1 als Abbruchbedingung für weitere Vergleiche
     end;
 compare_with_parent(Heap, Idx) when Idx rem 2 == 1 ->
     ParentIdx = (Idx - 1) div 2,
     %io:format("compare_with_parent: Idx=~p, ParentIdx=~p~n", [Idx, ParentIdx]),
-    E1 = get_Elem(Heap, Idx),
-    E2 = get_Elem(Heap, ParentIdx),
-    if E1 > E2 -> {swap(Heap, E1, E2, Idx, ParentIdx), ParentIdx};
+    {ParentE, ChildE} = get_Parent_Child(Heap, ParentIdx, Idx),%get Parent and Child in one function for faster runtime
+    if ChildE > ParentE -> {swap(Heap, ParentE, ChildE, ParentIdx, Idx), ParentIdx};
        true -> {Heap, -1}
     end.
 
@@ -87,9 +82,8 @@ compare_with_left_child(Heap, Idx, Count) ->
     if LeftChildIdx < Count ->%Abbruch (kein Child vorhanden)
         %io:format("compare_with_left_child: Idx=~p, LeftChildIdx=~p~n", [Idx, LeftChildIdx]),
         %io:format("Heap: ~p~n", [Heap]),
-        E1 = get_Elem(Heap, Idx),
-        E2 = get_Elem(Heap, LeftChildIdx),
-        if E1 < E2 -> {swap(Heap, E1, E2, Idx, LeftChildIdx), LeftChildIdx};% wenn kind größer, dann swap
+        {ParentE, ChildE} = get_Parent_Child(Heap, Idx, LeftChildIdx),%get Parent and Child in one function for faster runtime
+        if ParentE < ChildE -> {swap(Heap, ParentE, ChildE, Idx, LeftChildIdx), LeftChildIdx};% wenn kind größer, dann swap
            true -> {Heap, -1}
         end;
     true -> {Heap, -1}
@@ -100,16 +94,25 @@ compare_with_right_child(Heap, Idx, Count) ->
     if RightChildIdx < Count ->%Abbruch
         %io:format("compare_with_right_child: Idx=~p, RightChildIdx=~p~n", [Idx, RightChildIdx]),
         %io:format("Heap: ~p~n", [Heap]),
-        E1 = get_Elem(Heap, Idx),
-        E2 = get_Elem(Heap, RightChildIdx),
-        if E1 < E2 -> {swap(Heap, E1, E2, Idx, RightChildIdx), RightChildIdx};% wenn kind größer, dann swap
+        {ParentE, ChildE} = get_Parent_Child(Heap, Idx, RightChildIdx),%get Parent and Child in one function for faster runtime
+        if ParentE < ChildE -> {swap(Heap, ParentE, ChildE, Idx, RightChildIdx), RightChildIdx};% wenn kind größer, dann swap
            true -> {Heap, -1}
         end;
     true -> {Heap, -1}
     end.
 
-remove_last_elem([_|[]]) -> [];
-remove_last_elem([H|Tail]) -> [H | remove_last_elem(Tail)].
+%neue Hilfsfunktionen für schnellere runtime:
+get_Parent_Child([H|Tail], ParentIdx, ChildIdx) ->%Parent und Child in einer Funktion
+    if ParentIdx == 1 -> {H, get_Parent_Child(Tail,ParentIdx-1, ChildIdx-1)};
+        ChildIdx == 1 -> H;
+        true -> get_Parent_Child(Tail, ParentIdx-1, ChildIdx-1)
+    end.
+
+
+
+remove_last_elem([H|[]]) -> {H, []};
+remove_last_elem([H|Tail]) -> {Elem, NewTail} = remove_last_elem(Tail), {Elem, [H | NewTail]}.
+
 %end for heap.erl
 
 

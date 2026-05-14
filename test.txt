@@ -22,3 +22,11 @@ Heap Sort Zufallszahlen 400 Zahlen Startzeit: 13.05 13:38:50,730|Endezeit: 13.05
 Heap Sort aufsteigend 400 Zahlen Startzeit: 13.05 13:38:50,771|Endezeit: 13.05 13:38:50,815| Diff: 44 ms Sortiert: true
 Heap Sort absteigend 400 Zahlen Startzeit: 13.05 13:38:50,815|Endezeit: 13.05 13:38:50,844| Diff: 29 ms Sortiert: true
 Heap Sort runSortiert 400 Zahlen Startzeit: 13.05 13:38:50,844|Endezeit: 13.05 13:38:50,926| Diff: 82 ms Sortiert: true
+Heap Sort Zufallszahlen 2000 Zahlen Startzeit: 14.05 13:07:00,164|Endezeit: 14.05 13:07:04,588| Diff: 4423 ms Sortiert: true
+Heap Sort aufsteigend 2000 Zahlen Startzeit: 14.05 13:07:04,588|Endezeit: 14.05 13:07:10,545| Diff: 5957 ms Sortiert: true
+Heap Sort absteigend 2000 Zahlen Startzeit: 14.05 13:07:10,546|Endezeit: 14.05 13:07:15,221| Diff: 4676 ms Sortiert: true
+Heap Sort runSortiert 2000 Zahlen Startzeit: 14.05 13:07:15,222|Endezeit: 14.05 13:07:24,231| Diff: 9009 ms Sortiert: true
+Heap Sort Zufallszahlen 2000 Zahlen Startzeit: 14.05 13:20:09,221|Endezeit: 14.05 13:20:09,381| Diff: 160 ms Sortiert: true
+Heap Sort aufsteigend 2000 Zahlen Startzeit: 14.05 13:20:09,381|Endezeit: 14.05 13:20:09,567| Diff: 186 ms Sortiert: true
+Heap Sort absteigend 2000 Zahlen Startzeit: 14.05 13:20:09,567|Endezeit: 14.05 13:20:09,706| Diff: 139 ms Sortiert: true
+Heap Sort runSortiert 2000 Zahlen Startzeit: 14.05 13:20:09,706|Endezeit: 14.05 13:20:09,886| Diff: 180 ms Sortiert: true
