@@ -34,10 +34,22 @@ insert_at_Idx([H|Tail], Idx, E) -> [H|insert_at_Idx(Tail, Idx-1, E)].
 %get_Elem([H|_], 1) -> H;
 %get_Elem([_|Tail], Idx) -> get_Elem(Tail, Idx-1).
 
+%Parent und Child in einer Funktion holen
+get_Parent_Child([H|Tail], ParentIdx, ChildIdx) ->%Parent und Child in einer Funktion
+    if ParentIdx == 1 -> {H, get_Parent_Child(Tail,ParentIdx-1, ChildIdx-1)};
+        ChildIdx == 1 -> H;
+        true -> get_Parent_Child(Tail, ParentIdx-1, ChildIdx-1)
+    end.
+
 %tausche Parent und Child
 swap([_|Tail], ParentE, ChildE, ParentIdx, ChildIdx) when ParentIdx == 1 -> [ChildE|swap(Tail, ParentE, ChildE, ParentIdx-1, ChildIdx-1)];
-swap([_|Tail], ParentE, ChildE, ParentIdx, ChildIdx) when ChildIdx == 1 -> [ParentE|Tail];
+swap([_|Tail], ParentE, _, _, ChildIdx) when ChildIdx == 1 -> [ParentE|Tail];
 swap([H|Tail], ParentE, ChildE, ParentIdx, ChildIdx) -> [H|swap(Tail, ParentE, ChildE, ParentIdx-1, ChildIdx-1)].
+
+
+%letztes Element holen und Liste um dieses Element kürzen
+remove_last_elem([H|[]]) -> {H, []};
+remove_last_elem([H|Tail]) -> {Elem, NewTail} = remove_last_elem(Tail), {Elem, [H | NewTail]}.
 
 %--------------------------------Hilfe für insert---------------------------------
 %compare loop bis alle an richtiger Stelle
@@ -101,17 +113,7 @@ compare_with_right_child(Heap, Idx, Count) ->
     true -> {Heap, -1}
     end.
 
-%neue Hilfsfunktionen für schnellere runtime:
-get_Parent_Child([H|Tail], ParentIdx, ChildIdx) ->%Parent und Child in einer Funktion
-    if ParentIdx == 1 -> {H, get_Parent_Child(Tail,ParentIdx-1, ChildIdx-1)};
-        ChildIdx == 1 -> H;
-        true -> get_Parent_Child(Tail, ParentIdx-1, ChildIdx-1)
-    end.
 
-
-
-remove_last_elem([H|[]]) -> {H, []};
-remove_last_elem([H|Tail]) -> {Elem, NewTail} = remove_last_elem(Tail), {Elem, [H | NewTail]}.
 
 %end for heap.erl
 
