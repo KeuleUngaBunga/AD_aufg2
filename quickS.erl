@@ -7,7 +7,7 @@ quickS([], _) -> [];
 quickS([H|[]], _) -> [H];
 quickS(List, Pivot) ->
     Pivot_element = get_pivot_element(Pivot, List),
-    {Less, Greater, Equal} = part(List, Pivot_element),
+    {Less, Greater, Equal} = part(List, Pivot_element),%diesn Tupel in introsort verwenden
 
     %rekursiver Aufruf mit den drei Listen um die Liste zu sortieren: 
     %(für introsort weglassen und in introS mit Less/Greater/Equal die Aufrufe zu introS machen)

@@ -15,7 +15,7 @@ top({[Head|_],_}) -> Head.%top Element zurückgeben (Heap sollte unverändert in
 %13.05. --------------------------------pop fertig ----------------------------------
 pop({_, 2})->{[], 1};%nur ein Element im Heap, nach pop ist er leer
 pop({Heap,Count})->
-    Elem = get_Elem(Heap, Count-1),%das zerstört den heap!!!
+    Elem = get_Elem(Heap, Count-1),
     NewHeap = insert_at_Idx(Heap, 1, Elem),%1. letztes Element an erste Stelle setzen
     NewHeap2 = remove_last_elem(NewHeap),%2. letztes Element entfernen
     NewHeap3 = compare_loop_pop(NewHeap2, 1, Count-1),%maxHeap wiederherstellen, Idx=1 für beginn bei Wurzel
